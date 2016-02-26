@@ -3,35 +3,16 @@
 require 'rubygems'
 require 'logging'
 
-::Logging.configure {
-  logger('Webby') {
-    level      :info
-    appenders  'stdout'
-  }
+# Configure the loggers
+Logging.appenders.stdout('journal', :layout => Logging::Layouts.pattern(:pattern => "%m\n"))
+Logging.appenders.stdout('stdout',  :layout => Logging::Layouts.pattern(:pattern => "[%d] %5l: %m\n", :date_pattern => "%H:%M:%S"))
 
-  logger('Webby::Journal') {
-    level      :info
-    additive   false
-    appenders  'journal'
-  }
+Logging.logger['Webby'].level = :info
+Logging.logger['Webby'].appenders = ['stdout']
 
-  appender('stdout') {
-    type   'Stdout'
-    layout {
-      type          'Pattern'
-      pattern       "[%d] %5l: %m\n"
-      date_pattern  "%H:%M:%S"
-    }
-  }
-
-  appender('journal') {
-    type  'Stdout'
-    layout {
-      type     'Pattern'
-      pattern  "%m\n"
-    }
-  }
-}
+Logging.logger['Webby::Journal'].level = :info
+Logging.logger['Webby::Journal'].appenders = ['journal']
+Logging.logger['Webby::Journal'].additive = false
 
 require File.expand_path(
     File.join(File.dirname(__FILE__), %w[.. lib webby]))
