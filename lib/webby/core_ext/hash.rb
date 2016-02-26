@@ -23,6 +23,18 @@ class Hash
     self.each {|k,v| h[k.to_sym] = v}
     return h
   end
+
+  def getopt(opt, default = nil)
+    keys = opt.respond_to?('each') ? opt : [opt]
+    keys.each do |key, *ignored|
+      return self[key] if self.has_key? key
+      key = "#{ key }"
+      return self[key] if self.has_key? key
+      key = key.intern
+      return self[key] if self.has_key? key
+    end
+    return default
+  end
 end  # class Hash
 
 # EOF
